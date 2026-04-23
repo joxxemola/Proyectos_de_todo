@@ -34,6 +34,10 @@ def iniciar_excel():
     pedidos = libro.create_sheet("Pedidos")
     pedidos.append(["COD_PEDIDO", "COD_PLATO", "NOMBRE", "PRECIO", "CANTIDAD", "TOTAL"])
 
+    # HOJA TIPO
+    tipo = libro.create_sheet("Tipo")
+    tipo.append(["CODIGO", "TIPO"])
+
     libro.save(ruta)
     return libro
 
@@ -43,15 +47,23 @@ def iniciar_excel():
 def registrar_platos(libro):
     hoja = libro["Platos"]
 
+    # Crea la hoja Tipo si no existe
+    if "Tipo" not in libro.sheetnames:
+        hoja_tipo = libro.create_sheet("Tipo")
+        hoja_tipo.append(["CODIGO", "TIPO"])
+    else:
+        hoja_tipo = libro["Tipo"]
+
     n = int(input("¿Cuántos platos?: "))
 
     for _ in range(n):
         codigo = input("Código: ")
         nombre = input("Nombre: ")
-        tipo = input("Tipo (bebida/comida/postre): ")
+        tipo = input("Tipo (Plato Fuerte/Entrada): ")
         precio = float(input("Precio: "))
 
         hoja.append([codigo, nombre, tipo, precio])
+        hoja_tipo.append([codigo, tipo])
 
     libro.save(ruta)
     print("Platos guardados ✔")

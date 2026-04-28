@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from openpyxl import Workbook, load_workbook
 
 # RUTA SEGURA
@@ -30,9 +31,9 @@ def iniciar_excel():
     platos = libro.create_sheet("Platos")
     platos.append(["CODIGO", "NOMBRE", "TIPO", "PRECIO"])
 
-    # HOJA PEDIDOS
+    # HOJA PEDIDOS (CON FECHA)
     pedidos = libro.create_sheet("Pedidos")
-    pedidos.append(["COD_PEDIDO", "COD_PLATO", "NOMBRE", "PRECIO", "CANTIDAD", "TOTAL"])
+    pedidos.append(["COD_PEDIDO", "COD_PLATO", "NOMBRE", "PRECIO", "CANTIDAD", "TOTAL", "FECHA"])
 
     # HOJA TIPO
     tipo = libro.create_sheet("Tipo")
@@ -87,6 +88,9 @@ def hacer_pedido(libro):
     cod_pedido = input("Código del pedido: ")
     n = int(input("¿Cuántos productos?: "))
 
+    # FECHA ACTUAL
+    fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     for _ in range(n):
         cod_plato = input("Código del plato: ")
         plato = buscar_plato(platos, cod_plato)
@@ -105,7 +109,8 @@ def hacer_pedido(libro):
             plato[1],
             precio,
             cantidad,
-            total
+            total,
+            fecha_actual
         ])
 
         print(f"Agregado: {plato[1]} x{cantidad} = {total}")
@@ -125,7 +130,7 @@ def ver_pedido(libro):
 
     for fila in hoja.iter_rows(min_row=2, values_only=True):
         if str(fila[0]) == codigo:
-            print(f"{fila[2]} x{fila[4]} = {fila[5]}")
+            print(f"{fila[2]} x{fila[4]} = {fila[5]}  |  Fecha: {fila[6]}")
             total_general += fila[5]
 
     print(f"\nTOTAL A PAGAR: {total_general}")

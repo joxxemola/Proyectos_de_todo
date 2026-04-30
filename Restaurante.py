@@ -41,8 +41,6 @@ def iniciar_excel():
     tipos = libro.create_sheet("Tipos")
     tipos.append(["CODIGO", "NOMBRE"])
     
-    # Datos de ejemplo
-    
     # HOJA PLATOS
     platos = libro.create_sheet("Platos")
     platos.append(["CODIGO", "NOMBRE", "COD_TIPO", "TIPO", "PRECIO"])
@@ -69,7 +67,6 @@ def registrar_tipos(libro):
     print("\n=== REGISTRAR TIPO DE PLATO ===")
     hoja = libro["Tipos"]
     
-    # Mostrar tipos existentes
     print("\nTipos ya registrados:")
     for fila in hoja.iter_rows(min_row=2, values_only=True):
         print(f"   {fila[0]} - {fila[1]}")
@@ -78,11 +75,9 @@ def registrar_tipos(libro):
     
     for i in range(n):
         print(f"\n--- Tipo {i+1} ---")
-        # Código automático
         codigo = obtener_siguiente_codigo(hoja, "TIP", 0)
         nombre = input("Ingrese el nombre del tipo (ejemplo: Entrada, Plato Fuerte, Postre, Bebida): ")
         
-        # Validar que no esté vacío
         if not nombre.strip():
             print("El nombre no puede estar vacío")
             continue
@@ -91,7 +86,7 @@ def registrar_tipos(libro):
         print(f"Tipo registrado: {codigo} - {nombre}")
     
     libro.save(ruta)
-    print("\nTipos guardados exitosamente ")
+    print("\nTipos guardados exitosamente ✔")
     print("\nLista actualizada de tipos:")
     for fila in hoja.iter_rows(min_row=2, values_only=True):
         print(f"   {fila[0]} - {fila[1]}")
@@ -104,7 +99,6 @@ def registrar_platos(libro):
     tipo_hoja = libro["Tipos"]
     plato_hoja = libro["Platos"]
     
-    # Mostrar tipos disponibles
     print("\nTipos disponibles para seleccionar:")
     tipos_disponibles = []
     for fila in tipo_hoja.iter_rows(min_row=2, values_only=True):
@@ -119,11 +113,9 @@ def registrar_platos(libro):
     
     for i in range(n):
         print(f"\n--- Plato {i+1} ---")
-        # Código automático para plato
         codigo = obtener_siguiente_codigo(plato_hoja, "PLA", 0)
         nombre = input("Nombre del plato: ")
         
-        # Seleccionar tipo por código
         cod_tipo = input("Código del tipo (ejemplo: TIP001): ")
         tipo_nombre = None
         
@@ -134,7 +126,6 @@ def registrar_platos(libro):
         
         if not tipo_nombre:
             print("Tipo no válido, por favor use un código de la lista")
-            print("Tipos disponibles:")
             for fila in tipo_hoja.iter_rows(min_row=2, values_only=True):
                 print(f"   {fila[0]} - {fila[1]}")
             continue
@@ -145,7 +136,7 @@ def registrar_platos(libro):
         print(f"Plato registrado: {codigo} - {nombre} ({tipo_nombre}) - ${precio:.2f}")
     
     libro.save(ruta)
-    print("\nPlatos guardados exitosamente ")
+    print("\nPlatos guardados exitosamente ✔")
 
 # ========================
 # 3. HACER PEDIDO
@@ -155,18 +146,15 @@ def hacer_pedido(libro):
     plato_hoja = libro["Platos"]
     pedido_hoja = libro["Pedidos"]
     
-    # Verificar si hay platos registrados
     platos_existentes = list(plato_hoja.iter_rows(min_row=2, values_only=True))
     if not platos_existentes:
         print("No hay platos registrados. Por favor, registre platos primero.")
         return
     
-    # Mostrar platos disponibles
     print("\nPlatos disponibles:")
     for fila in platos_existentes:
         print(f"   {fila[0]} - {fila[1]} ({fila[3]}) - ${fila[4]:.2f}")
     
-    # Código automático para pedido
     cod_pedido = obtener_siguiente_codigo(pedido_hoja, "PED", 0)
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
@@ -181,7 +169,6 @@ def hacer_pedido(libro):
         print(f"\n--- Ítem {i+1} ---")
         cod_plato = input("Código del plato: ")
         
-        # Buscar el plato
         plato_info = None
         for fila in platos_existentes:
             if fila[0] == cod_plato:
@@ -206,7 +193,7 @@ def hacer_pedido(libro):
     
     if items_agregados > 0:
         libro.save(ruta)
-        print(f"\nPedido {cod_pedido} creado exitosamente ")
+        print(f"\nPedido {cod_pedido} creado exitosamente ✔")
         print(f"Total del pedido: ${total_pedido:.2f}")
     else:
         print("\nNo se agregaron items al pedido")
@@ -233,7 +220,7 @@ def registrar_proveedor(libro):
         print(f"Proveedor registrado: {nombre} - NIT: {nit}")
     
     libro.save(ruta)
-    print("\nProveedores guardados exitosamente ")
+    print("\nProveedores guardados exitosamente ✔")
 
 # ========================
 # FUNCIÓN PARA MOSTRAR CÓDIGOS DE PEDIDOS
@@ -242,10 +229,9 @@ def mostrar_codigos_pedidos(libro):
     """Muestra todos los códigos de pedidos registrados"""
     pedido_hoja = libro["Pedidos"]
     
-    # Obtener códigos únicos de pedidos
     codigos_pedidos = set()
     for fila in pedido_hoja.iter_rows(min_row=2, values_only=True):
-        if fila[0]:  # COD_PEDIDO
+        if fila[0]:
             codigos_pedidos.add(fila[0])
     
     if not codigos_pedidos:
@@ -255,7 +241,6 @@ def mostrar_codigos_pedidos(libro):
     print("\nLISTA DE PEDIDOS REGISTRADOS:")
     print("-" * 50)
     for idx, codigo in enumerate(sorted(codigos_pedidos), 1):
-        # Contar cuántos platos tiene el pedido
         cantidad_platos = 0
         total_pedido = 0
         for fila in pedido_hoja.iter_rows(min_row=2, values_only=True):
@@ -269,57 +254,49 @@ def mostrar_codigos_pedidos(libro):
     return list(codigos_pedidos)
 
 # ========================
-# 5. IMPRIMIR FACTURA (MODIFICADA)
+# 5. IMPRIMIR FACTURA
 # ========================
 def imprimir_factura(libro):
     print("\n=== IMPRIMIR FACTURA ===")
     pedido_hoja = libro["Pedidos"]
     factura_hoja = libro["Facturas"]
     
-    # MOSTRAR TODOS LOS CÓDIGOS DE PEDIDOS REGISTRADOS
     codigos_disponibles = mostrar_codigos_pedidos(libro)
     
     if not codigos_disponibles:
         print("\nNo hay pedidos registrados para facturar.")
         return
     
-    # Solicitar código del pedido
     print("\n")
     cod_pedido = input("Ingrese el código del pedido (ejemplo: PED001): ")
     
-    # Buscar todos los ítems del pedido
     items_pedido = []
     subtotal = 0
     
     for fila in pedido_hoja.iter_rows(min_row=2, values_only=True):
         if fila[0] == cod_pedido:
             items_pedido.append(fila)
-            subtotal += fila[6]  # TOTAL del item
+            subtotal += fila[6]
     
     if not items_pedido:
         print(f"\nPedido {cod_pedido} no encontrado.")
         print("Por favor, verifique el código ingresado.")
         return
     
-    # Calcular IVA (14%)
     iva = subtotal * 0.14
     total = subtotal + iva
     
-    # Datos del cliente
     print("\n--- Datos del Cliente ---")
     cod_cliente = input("Código del cliente: ")
     nombre_cliente = input("Nombre del cliente: ")
     
-    # Código automático para factura
     cod_factura = obtener_siguiente_codigo(factura_hoja, "FAC", 0)
     fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Guardar factura
     factura_hoja.append([
         cod_factura, fecha, cod_cliente, nombre_cliente, cod_pedido, subtotal, iva, total
     ])
     
-    # IMPRIMIR FACTURA EN PANTALLA
     print("\n" + "="*60)
     print("                     FACTURA")
     print("="*60)
@@ -345,7 +322,89 @@ def imprimir_factura(libro):
     print("="*60)
     
     libro.save(ruta)
-    print("\nFactura guardada exitosamente ")
+    print("\nFactura guardada exitosamente ✔")
+
+# ========================
+# 6. INVENTARIO DE CONSUMO  ← NUEVA FUNCIÓN
+# ========================
+def mostrar_inventario_consumo(libro):
+    print("\n" + "="*60)
+    print("          INVENTARIO DE CONSUMO DE PLATOS")
+    print("="*60)
+    
+    pedido_hoja = libro["Pedidos"]
+    
+    # Consolidar consumo por plato: {cod_plato: [nombre, cantidad_total, ingresos_total]}
+    consumo = {}
+    
+    for fila in pedido_hoja.iter_rows(min_row=2, values_only=True):
+        # fila: COD_PEDIDO, FECHA, COD_PLATO, NOMBRE_PLATO, PRECIO, CANTIDAD, TOTAL
+        if fila[2]:  # COD_PLATO
+            cod_plato  = fila[2]
+            nombre     = fila[3] if fila[3] else "Desconocido"
+            cantidad   = fila[5] if fila[5] else 0
+            total_item = fila[6] if fila[6] else 0
+            
+            if cod_plato not in consumo:
+                consumo[cod_plato] = [nombre, 0, 0.0]
+            consumo[cod_plato][1] += cantidad        # acumular cantidad
+            consumo[cod_plato][2] += total_item      # acumular ingresos
+    
+    if not consumo:
+        print("\nNo hay consumo registrado aún.")
+        return
+    
+    # ── Tabla general ──
+    ancho = 60
+    print(f"\n{'Cód. Plato':<12} {'Nombre del Plato':<28} {'Cant.':>6} {'Ingresos':>10}")
+    print("-" * ancho)
+    
+    total_unidades = 0
+    total_ingresos = 0.0
+    
+    for cod, (nombre, cantidad, ingresos) in sorted(consumo.items()):
+        print(f"{cod:<12} {nombre:<28} {cantidad:>6} ${ingresos:>9.2f}")
+        total_unidades += cantidad
+        total_ingresos += ingresos
+    
+    print("-" * ancho)
+    print(f"{'TOTAL GENERAL':<41} {total_unidades:>6} ${total_ingresos:>9.2f}")
+    print("="*60)
+    
+    # ── Consulta por plato específico ──
+    respuesta = input("\n¿Desea consultar el consumo de un plato específico? (si/no): ").strip().lower()
+    
+    if respuesta == "si":
+        print("\nCódigos disponibles:")
+        for cod, (nombre, _, _) in sorted(consumo.items()):
+            print(f"   {cod} - {nombre}")
+        
+        cod_buscar = input("\nIngrese el código del plato: ").strip()
+        
+        if cod_buscar in consumo:
+            nombre, cantidad, ingresos = consumo[cod_buscar]
+            
+            print("\n" + "="*60)
+            print("        DETALLE DE CONSUMO — PLATO ESPECÍFICO")
+            print("="*60)
+            print(f"  Código  : {cod_buscar}")
+            print(f"  Plato   : {nombre}")
+            print(f"  Cantidad pedida (unidades): {cantidad}")
+            print(f"  Ingresos generados        : ${ingresos:.2f}")
+            
+            # Mostrar en qué pedidos apareció
+            print("\n  Pedidos en que fue solicitado:")
+            print(f"  {'Pedido':<12} {'Fecha':<22} {'Cant.':>6} {'Subtotal':>10}")
+            print("  " + "-"*52)
+            for fila in pedido_hoja.iter_rows(min_row=2, values_only=True):
+                if fila[2] == cod_buscar:
+                    fecha_str = str(fila[1]) if fila[1] else "—"
+                    print(f"  {fila[0]:<12} {fecha_str:<22} {fila[5]:>6} ${fila[6]:>9.2f}")
+            print("="*60)
+        else:
+            print(f"\nNo se encontró el plato con código '{cod_buscar}'.")
+    else:
+        print("\nConsulta finalizada.")
 
 # ========================
 # MENÚ PRINCIPAL
@@ -362,7 +421,8 @@ def menu():
         print("3. Hacer Pedido")
         print("4. Registrar Proveedor")
         print("5. Imprimir Factura")
-        print("6. Salir")
+        print("6. Mostrar Inventario de Consumo")   # ← NUEVA OPCIÓN
+        print("7. Salir")                            # ← ahora es 7
         print("="*50)
         
         op = input("Seleccione una opción: ")
@@ -378,12 +438,14 @@ def menu():
         elif op == "5":
             imprimir_factura(libro)
         elif op == "6":
+            mostrar_inventario_consumo(libro)
+        elif op == "7":
             print("\n¡Hasta luego!")
             break
         else:
             print("Opción no válida")
         
-        if op != "6":
+        if op != "7":
             limpiar()
 
 # ========================

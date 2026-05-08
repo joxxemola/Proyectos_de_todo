@@ -27,7 +27,7 @@ FinFuncion
 
 
 // ============================================================
-//  FUNCIÓN: PromedioMateria
+//  FUNCIï¿½N: PromedioMateria
 //  Lee las 3 notas de una materia y devuelve su promedio.
 //  Devuelve -1 si hubo demasiados errores en alguna nota.
 // ============================================================

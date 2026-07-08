@@ -837,4 +837,4 @@ tk.Button(principal, text="Salir", command=principal.quit,
 # Actualizar estado inicial
 actualizar_estado()
 
-principal.mainloop()
+principal.mainloop() 

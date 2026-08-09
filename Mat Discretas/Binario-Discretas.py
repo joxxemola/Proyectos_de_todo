@@ -25,11 +25,11 @@ def decimal_a_ieee754(x, bits=32):
     """
     exp_bits, mant_bits, sesgo = configuracion(bits)
 
-    # ---- 1. SIGNO -----------------------------------------------------
+   
     signo = '1' if x < 0 else '0'
     x = abs(x)
 
-    # ---- CASO ESPECIAL: CERO ------------------------------------------
+    
     if x == 0:
         bitstring = signo + '0' * exp_bits + '0' * mant_bits
         detalle = {"signo": signo, "exponente_real": 0,
@@ -39,10 +39,10 @@ def decimal_a_ieee754(x, bits=32):
     parte_entera = int(x)
     parte_fraccionaria = x - parte_entera
 
-    # ---- 2. PARTE ENTERA A BINARIO -------------------------------------
+    
     bin_entera = bin(parte_entera)[2:] if parte_entera != 0 else ''
 
-    # ---- 3. PARTE FRACCIONARIA A BINARIO (multiplicaciones sucesivas) -
+    
     bin_fraccionaria = ''
     temp = parte_fraccionaria
     max_iter = mant_bits + exp_bits + 64
@@ -54,7 +54,7 @@ def decimal_a_ieee754(x, bits=32):
         if temp == 0:
             break
 
-    # ---- 4. NORMALIZACION: llevar el numero a la forma 1.xxxx * 2^e ----
+
     if parte_entera != 0:
         exponente_real = len(bin_entera) - 1
         digitos_mantisa = bin_entera[1:] + bin_fraccionaria
@@ -67,14 +67,14 @@ def decimal_a_ieee754(x, bits=32):
             exponente_real = -(primer_uno + 1)
             digitos_mantisa = bin_fraccionaria[primer_uno + 1:]
 
-    # ---- 5. AJUSTAR MANTISA A m BITS con REDONDEO (round-to-nearest-even)
+
     digitos_mantisa = digitos_mantisa.ljust(mant_bits + 2, '0')
     digitos_mantisa, acarreo = _redondear_mantisa(digitos_mantisa, mant_bits)
     if acarreo:
         exponente_real += 1
         digitos_mantisa = '0' * mant_bits
 
-    # ---- 6. SESGAR EL EXPONENTE (e_almacenado = e_real + sesgo) --------
+   
     exponente_sesgado = exponente_real + sesgo
     bin_exponente = format(exponente_sesgado, '0{}b'.format(exp_bits))
 
@@ -90,11 +90,7 @@ def decimal_a_ieee754(x, bits=32):
 
 
 def _redondear_mantisa(bits_str, n):
-    """
-    Redondea una cadena binaria a n bits usando la regla
-    'round to nearest, ties to even' (la que exige IEEE-754).
-    Retorna (mantisa_redondeada_de_n_bits, hubo_acarreo).
-    """
+
     if len(bits_str) <= n:
         return bits_str.ljust(n, '0'), False
 
@@ -201,9 +197,8 @@ def ieee754_a_texto(cadena_binaria, bits=32):
     return texto
 
 
-# ==============================================================================
-# PARTE 3: MENU PRINCIPAL UNIFICADO
-# ==============================================================================
+
+
 
 def mostrar_menu():
     print("=" * 70)

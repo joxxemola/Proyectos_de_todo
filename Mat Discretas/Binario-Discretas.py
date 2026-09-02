@@ -3,9 +3,6 @@
 ## binaria en formato IEEE-754 (32 o 64 bits) y viceversa.
 
 
-
-
-
 def configuracion(bits):
     """Devuelve (bits_exponente, bits_mantisa, sesgo) segun la precision."""
     if bits == 32:

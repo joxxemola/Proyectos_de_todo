@@ -72,7 +72,7 @@ def decimal_a_ieee754(x, bits=32):
 
     # Trabajamos con el valor absoluto para convertir
     # posteriormente la parte numérica.
-    x = abs(x)
+    x = abs(x)  
 
 
     # --------------------------------------------------------
@@ -678,7 +678,7 @@ def opcion_decimal_a_ieee754():
 
     # Realizamos la conversión.
     cadena, detalle = decimal_a_ieee754(
-        x,
+        x,  
         bits
     )
 
